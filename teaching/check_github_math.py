@@ -116,7 +116,11 @@ def check_against_github(src, src_no_fence):
     html = out.stdout
     toks = Counter(re.findall(rf"{re.escape(BS)}([a-zA-Z]+)", src_no_fence))
     lost = [(t, n, html.count(BS + t)) for t, n in toks.items() if html.count(BS + t) < n]
-    errors = html.count("flash-error")
+    # A failed expression renders as an element carrying the flash-error class.
+    # Match the class attribute, not the bare string -- a document that merely
+    # mentions "flash-error" in its prose (this one does) would otherwise
+    # report failures that are not there.
+    errors = len(re.findall(r'class="[^"]*flash-error', html))
 
     print(f"  LaTeX 指令：{len(toks)} 種、{sum(toks.values())} 次出現")
     print(f"  被吃掉的  ：{len(lost)}")
