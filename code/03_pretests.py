@@ -29,6 +29,9 @@ SERIES = [
     "R_BUIDL_mkt", "R_BUIDL_nav",
     "R_OUSG_mkt", "R_OUSG_nav",
     "R_sUSDS_mkt", "R_sUSDS_nav",
+    # native crypto, DeFi governance tokens and gold: these enter the DCC,
+    # TVP-VAR and wavelet stages downstream, so they are pre-tested here too.
+    "R_BTC", "R_ETH", "R_UNI", "R_AAVE", "R_GLD",
 ]
 
 desc_rows = []

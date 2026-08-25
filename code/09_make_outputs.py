@@ -156,13 +156,16 @@ if regime_path.exists():
 
 hedge = pd.read_csv(PROC / "hedge_summary.csv")
 hedge_disp = hedge[hedge["hedge_instrument"] != "SHV"].copy()  # SHV excluded: near-zero variance destabilizes h_ij/h_jj
-cols = ["hedged_equity", "hedge_instrument", "n_obs", "mean_beta_star", "HE", "HE_cost_10bp", "CVaR95_hedged"]
+cols = ["hedged_equity", "hedge_instrument", "n_obs", "mean_beta_star", "HE",
+        "cost_bp_ann_10bp", "HE_net_10bp", "CVaR95_hedged"]
 hedge_disp = hedge_disp[cols].round(4)
 to_booktabs(hedge_disp, "table_hedge.tex", index=False)
 
 # supplementary: full hedge table incl. SHV and all three cost scenarios
 full_cols = ["hedged_equity", "hedge_instrument", "n_obs", "mean_beta_star", "sd_beta_star",
-             "HE", "HE_cost_5bp", "HE_cost_10bp", "HE_cost_20bp", "mean_turnover",
+             "HE", "mean_turnover", "cost_bp_ann_5bp", "cost_bp_ann_10bp", "cost_bp_ann_20bp",
+             "HE_net_5bp", "HE_net_10bp", "HE_net_20bp",
+             "mean_ret_unhedged", "mean_ret_hedged", "mean_ret_net_10bp",
              "VaR95_unhedged", "VaR95_hedged", "CVaR95_unhedged", "CVaR95_hedged"]
 to_booktabs(hedge[full_cols].round(4), "table_hedge_full.tex", index=False)
 

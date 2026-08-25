@@ -8,9 +8,10 @@ look-ahead bias, per eq. (3.29) of the underlying research design.
 Traditional Treasury ETFs (SHV, IEF) are estimated the same way as a
 benchmark for comparison.
 
-A simple transaction-cost scenario (one-way costs of 5/10/20 bp on hedge-
-ratio turnover) is layered on top, following eq. in Sec. 3.10.4 of the
-research design.
+A transaction-cost scenario (one-way costs of 5/10/20 bp applied to
+hedge-ratio turnover |Delta beta|) is layered on top. Costs are reported
+as a mean/level drag in basis points per year, NOT folded into the
+Ederington variance-reduction ratio, which they do not belong in.
 """
 import warnings
 from pathlib import Path
@@ -59,15 +60,32 @@ for eq_name, eq_col in EQUITY_HEDGED.items():
         var_hedged = r_hedged.var()
         HE = 1 - var_hedged / var_unhedged if var_unhedged > 0 else np.nan
 
-        # turnover / transaction-cost adjustment
-        turnover = combined["beta_lag"].diff().abs()
+        # --- turnover and transaction costs ---------------------------------
+        # beta_lag is the notional weight held in the hedge instrument per unit
+        # of the hedged asset, so rebalancing the hedge trades |Delta beta|
+        # units of notional and costs c * |Delta beta| in the SAME percent
+        # return units as the series themselves (all returns are *100 log
+        # returns, so bp -> percent is /100, not /10000).
+        #
+        # Transaction costs are a MEAN (level) effect, not a variance effect:
+        # Ederington HE is a variance-reduction ratio and costs do not belong
+        # inside it. We therefore keep HE as the pure variance measure and
+        # report the cost drag separately, on the mean, in basis points.
+        turnover = combined["beta_lag"].diff().abs().fillna(0.0)
+        mean_ret_unhedged = combined["r_eq"].mean()
+        mean_ret_hedged = r_hedged.mean()
         cost_results = {}
         for bps in COST_BPS:
-            c = bps / 10000.0
-            r_hedged_cost = r_hedged - c * turnover.reindex(r_hedged.index).fillna(0) * combined["r_hedge"].abs()
-            var_hedged_cost = r_hedged_cost.var()
-            HE_cost = 1 - var_hedged_cost / var_unhedged if var_unhedged > 0 else np.nan
-            cost_results[f"HE_cost_{bps}bp"] = HE_cost
+            c = bps / 100.0  # basis points -> percent, matching the *100 log returns
+            cost_t = c * turnover
+            r_hedged_net = r_hedged - cost_t
+            cost_results[f"cost_bp_day_{bps}bp"] = 100.0 * cost_t.mean()
+            cost_results[f"cost_bp_ann_{bps}bp"] = 100.0 * cost_t.mean() * 252.0
+            cost_results[f"mean_ret_net_{bps}bp"] = r_hedged_net.mean()
+            # variance ratio after the cost drag, reported for completeness only
+            cost_results[f"HE_net_{bps}bp"] = (
+                1 - r_hedged_net.var() / var_unhedged if var_unhedged > 0 else np.nan
+            )
 
         # downside-risk metrics
         var95_unhedged = combined["r_eq"].quantile(0.05)
@@ -79,13 +97,15 @@ for eq_name, eq_col in EQUITY_HEDGED.items():
             "hedged_equity": eq_name, "hedge_instrument": hedge, "n_obs": len(combined),
             "mean_beta_star": combined["beta_lag"].mean(), "sd_beta_star": combined["beta_lag"].std(),
             "var_unhedged": var_unhedged, "var_hedged": var_hedged, "HE": HE,
+            "mean_ret_unhedged": mean_ret_unhedged, "mean_ret_hedged": mean_ret_hedged,
             **cost_results,
             "VaR95_unhedged": var95_unhedged, "VaR95_hedged": var95_hedged,
             "CVaR95_unhedged": cvar95_unhedged, "CVaR95_hedged": cvar95_hedged,
             "mean_turnover": turnover.mean(),
         })
         print(f"[hedge] {hedge}->{eq_name}: n={len(combined)}, mean_beta={combined['beta_lag'].mean():.4f}, "
-              f"HE={HE:.4f}, HE_10bp={cost_results['HE_cost_10bp']:.4f}")
+              f"HE={HE:.4f}, cost@10bp={cost_results['cost_bp_ann_10bp']:.1f}bp/yr, "
+              f"HE_net_10bp={cost_results['HE_net_10bp']:.4f}")
 
 hedge_df = pd.DataFrame(rows)
 hedge_df.to_csv(PROC / "hedge_summary.csv", index=False)

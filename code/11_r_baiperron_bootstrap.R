@@ -30,6 +30,8 @@ root <- local({
 proc_dir <- file.path(root, "data", "processed")
 
 dcc_files <- list.files(proc_dir, pattern = "^dcc_.*\\.csv$", full.names = TRUE)
+# dcc_adcc_summary.csv matches the glob but is a summary table, not a pair path
+dcc_files <- dcc_files[basename(dcc_files) != "dcc_adcc_summary.csv"]
 cat("Found", length(dcc_files), "DCC pair files\n")
 
 set.seed(20260818)
@@ -114,6 +116,26 @@ for (f in dcc_files) {
 
 bp_df <- do.call(rbind, bp_rows)
 boot_df <- do.call(rbind, boot_rows)
+
+## ---- coverage guard ----
+## This script must cover every bivariate pair that 04_garch_dcc.py produced.
+## An earlier run silently reported only 31 of 34 pairs because it was executed
+## before three dcc_*.csv files existed, and nothing downstream noticed. Fail
+## loudly rather than write a quietly incomplete table.
+expected <- sub("^dcc_", "", tools::file_path_sans_ext(basename(dcc_files)))
+missing_bp <- setdiff(expected, bp_df$pair)
+missing_bo <- setdiff(expected, boot_df$pair)
+if (length(missing_bp) || length(missing_bo)) {
+  stop(sprintf(
+    "coverage guard: %d/%d pairs in Bai-Perron and %d/%d in bootstrap. Missing: %s. Re-run 04_garch_dcc.py first if any dcc_*.csv is absent.",
+    nrow(bp_df), length(expected), nrow(boot_df), length(expected),
+    paste(union(missing_bp, missing_bo), collapse = ", ")))
+}
+cat(sprintf("
+coverage guard: all %d DCC pairs covered (%d flagged degenerate).
+",
+            length(expected), sum(bp_df$degenerate)))
+
 write.csv(bp_df, file.path(proc_dir, "r_baiperron_results.csv"), row.names = FALSE)
 write.csv(boot_df, file.path(proc_dir, "r_blockbootstrap_results.csv"), row.names = FALSE)
 

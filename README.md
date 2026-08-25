@@ -4,6 +4,8 @@ Data-retrieval and analysis code (Python and R) and processed datasets underlyin
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22092666.svg)](https://doi.org/10.5281/zenodo.22092666)
 
+**Current release: v1.1.0** — corrects the transaction-cost calculation in `08_hedge.py` and the Bai-Perron/bootstrap pair coverage. Some reported numbers differ from v1.0.0; see [CHANGELOG.md](CHANGELOG.md).
+
 > The manuscript itself is under journal review and is not included in this repository. This repo contains only the reproducible data pipeline: fetch scripts, processed datasets, analysis code, and the figures/tables generated from them.
 
 ## What this tests
@@ -84,13 +86,23 @@ Rscript code/11_r_baiperron_bootstrap.R
 Rscript code/12_r_partial_wavelet.R
 ```
 
+**Run the Python steps first.** Scripts 11 and 12 consume the per-pair `dcc_*.csv` files written by `04_garch_dcc.py`; running them against a partially-populated `data/processed/` silently produces a table covering only the pairs that happened to exist. `11_r_baiperron_bootstrap.R` now ends with a coverage guard that fails loudly if any DCC pair is missing from its output, rather than writing a quietly incomplete table.
+
+If R cannot write to the system library (`'lib = ...' is not writable`), install to a user library instead:
+
+```bash
+Rscript -e 'dir.create(Sys.getenv("R_LIBS_USER"), recursive=TRUE, showWarnings=FALSE)'
+```
+
 The processed outputs already in `data/processed/` are the exact numbers reported in the manuscript, so the R and Python steps above can each be run independently to regenerate (and verify) a subset of results without re-running the full pipeline.
 
 ## Known limitations (disclosed, not hidden)
 
 - The token *market-cap* return track is protocol/pool TVL growth, which mixes valuation and net-flow effects; transaction-level (Dune/Etherscan) data would separate these event-by-event but was not available without a paid API key.
-- BUIDL/OUSG's *fundamental* return track is a 3-month T-bill-yield proxy, not an official daily NAV feed.
-- Sample lengths differ sharply by token (370-879 observations) because each DefiLlama feed's indexing postdates nominal product launch.
+- BUIDL/OUSG's *fundamental* return track is a 3-month T-bill-yield proxy, not an official daily NAV feed. Because it is the *same* proxy for both products, `R_BUIDL_nav` and `R_OUSG_nav` are by construction the identical series — their rows in `descriptive_stats.csv` and `unitroot_tests.csv` coincide exactly, and no NAV-track result distinguishes the two products.
+- Sample lengths differ sharply by token (371-880 observations) because each DefiLlama feed's indexing postdates nominal product launch.
+- 18 of the 34 bivariate DCC fits converge with at least one parameter on its box constraint and 11 produce a correlation path that is constant up to numerical noise (`sd(rho) < 1e-3`). Those pairs are flagged as `degenerate` in `r_baiperron_results.csv` / `r_blockbootstrap_results.csv` and should not be read as evidence of genuine constant correlation.
+- Ederington hedging effectiveness (`HE`) is a variance-reduction ratio, so transaction costs are **not** folded into it. `08_hedge.py` reports the cost of rebalancing separately, as an annualised drag on the mean in basis points (`cost_bp_ann_5bp` / `_10bp` / `_20bp`), computed as `c * |Delta beta|` in the same percent units as the returns. `HE_net_*` recomputes the variance ratio after the drag and is retained for completeness only.
 
 See the manuscript's Data and Methodology and Limitations sections for full detail.
 

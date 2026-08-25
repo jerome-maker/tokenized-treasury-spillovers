@@ -6,7 +6,7 @@ authors:
     given-names: Jerome
     orcid: "https://orcid.org/0000-0002-0790-8826"
     affiliation: "Graduate Institute of Finance, National Taiwan University of Science and Technology"
-version: 1.0.0
+version: 1.1.0
 date-released: "2026-08-25"
 license: MIT
 repository-code: "https://github.com/jerome-maker/tokenized-treasury-spillovers"
@@ -17,7 +17,7 @@ identifiers:
     description: "Concept DOI: always resolves to the latest archived version."
   - type: doi
     value: 10.5281/zenodo.22092667
-    description: "Version DOI for release v1.0.0, the snapshot matching the Investment Analysts Journal submission."
+    description: "Version DOI for release v1.0.0. Superseded by v1.1.0, which corrects the transaction-cost calculation and the Bai-Perron/bootstrap pair coverage; see CHANGELOG.md."
 keywords:
   - tokenized real-world assets
   - tokenized Treasury bonds
