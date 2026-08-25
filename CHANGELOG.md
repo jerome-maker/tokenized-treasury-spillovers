@@ -6,6 +6,8 @@ Zenodo archived releases under concept DOI
 
 ## v1.1.0 — 2026-08-25
 
+Version DOI [10.5281/zenodo.22094343](https://doi.org/10.5281/zenodo.22094343).
+
 Correctness release, produced during a pre-submission audit. Several reported
 numbers change. Anyone who used v1.0.0 should re-pull.
 
