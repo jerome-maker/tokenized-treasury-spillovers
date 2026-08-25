@@ -1,0 +1,2 @@
+VAR lag order (AIC): 5
+Total Connectedness Index (static, H=10): 31.8313

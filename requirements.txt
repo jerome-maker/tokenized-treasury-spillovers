@@ -1,0 +1,10 @@
+pandas>=2.2
+numpy>=2.1
+scipy>=1.15
+statsmodels>=0.14
+arch>=8.0
+matplotlib>=3.10
+networkx>=3.4
+pycwt>=0.4.0b1
+yfinance>=0.2.65
+requests>=2.32

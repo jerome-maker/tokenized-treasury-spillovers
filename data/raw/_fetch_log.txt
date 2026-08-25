@@ -1,0 +1,25 @@
+[yfinance] NYFANG (^NYFANG): 907 rows, 2023-01-03 00:00:00 -> 2026-08-14 00:00:00
+[yfinance] SOXX (SOXX): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] SMH (SMH): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] SHV (SHV): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] SGOV (SGOV): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] BIL (BIL): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] IEF (IEF): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] TLT (TLT): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] BTC (BTC-USD): 1325 rows, 2023-01-01 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] ETH (ETH-USD): 1325 rows, 2023-01-01 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] UNI (UNI7083-USD): 1325 rows, 2023-01-01 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] AAVE (AAVE-USD): 1325 rows, 2023-01-01 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] GLD (GLD): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] VIX (^VIX): 908 rows, 2023-01-03 00:00:00 -> 2026-08-14 00:00:00
+[yfinance] DXY (DX-Y.NYB): 909 rows, 2023-01-03 00:00:00 -> 2026-08-14 00:00:00
+[yfinance] DXY_ETF (UUP): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[yfinance] FNGS (FNGS): 908 rows, 2023-01-03 00:00:00 -> 2026-08-17 00:00:00
+[FRED] DGS3MO: 944 rows
+[FRED] DGS10: 944 rows
+[FRED] T10Y2Y: 945 rows
+[FRED] DFEDTARU: 1325 rows
+[DefiLlama] BUIDL TVL: 775 rows, 2024-07-06 00:00:00 -> 2026-08-18 08:10:47
+[DefiLlama] OUSG TVL: 1289 rows, 2023-01-27 00:00:00 -> 2026-08-18 08:52:59
+[DefiLlama] USDS supply: 700 rows, 2024-09-18 00:00:00 -> 2026-08-18 00:00:00
+[DefiLlama] sUSDS pool: 544 rows, 2025-02-21 00:00:00 -> 2026-08-18 00:00:00

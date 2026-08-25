@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use this code or data, please cite it as below."
+title: "Tokenized Treasuries Across Asset Classes: Time-Varying Correlation, Spillovers, and Hedging Effectiveness Against Equities, Crypto, DeFi Tokens and Gold — Code and Data"
+authors:
+  - family-names: Chou
+    given-names: Jerome
+    orcid: "https://orcid.org/0000-0002-0790-8826"
+    affiliation: "Graduate Institute of Finance, National Taiwan University of Science and Technology"
+version: 1.0.0
+date-released: "2026-08-25"
+license: MIT
+repository-code: "https://github.com/jerome-maker/tokenized-treasury-spillovers"
+keywords:
+  - tokenized real-world assets
+  - tokenized Treasury bonds
+  - DCC-GARCH
+  - TVP-VAR connectedness
+  - wavelet coherence
+  - hedging effectiveness
+  - decentralized finance
+abstract: >-
+  Data-retrieval and analysis code (Python and R) and processed datasets
+  underlying every table and figure in "Tokenized Treasuries Across Asset
+  Classes," submitted to Investment Analysts Journal. Covers AR-GARCH-family
+  marginal models, two-stage DCC/ADCC, a Kalman-filtered TVP-VAR with
+  Baruník-Křehlík frequency-domain decomposition, Bai-Perron structural
+  breaks, moving block-bootstrap intervals, two-state Markov-switching
+  regimes, wavelet and partial wavelet coherence, and DCC-implied hedge
+  ratios, applied to tokenized Treasury products (BUIDL, OUSG, sUSDS) against
+  technology equities, native crypto, DeFi governance tokens, and gold.
