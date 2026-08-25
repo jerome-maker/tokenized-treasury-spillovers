@@ -271,12 +271,16 @@ md("""
 Winsorization 把超過某個分位數的觀測值**壓縮到該分位數**，而非刪除：
 
 $$
-\\tilde{r}_t = \\begin{cases}
-q_{\\alpha} & \\text{if } r_t < q_{\\alpha} \\\\
-r_t & \\text{if } q_{\\alpha} \\le r_t \\le q_{1-\\alpha} \\\\
-q_{1-\\alpha} & \\text{if } r_t > q_{1-\\alpha}
-\\end{cases}
+\\tilde{r}_t = \\min\\Big( \\max(r_t,\\ q_{\\alpha}),\\ q_{1-\\alpha} \\Big)
 $$
+
+亦即逐段來看：
+
+| 條件 | 結果 |
+|---|---|
+| $r_t < q_{\\alpha}$ | $q_{\\alpha}$（壓到下分位數） |
+| $q_{\\alpha} \\le r_t \\le q_{1-\\alpha}$ | $r_t$（保持不變） |
+| $r_t > q_{1-\\alpha}$ | $q_{1-\\alpha}$（壓到上分位數） |
 
 與**截斷（truncation，直接刪除）**的關鍵差別：winsorization **保留樣本數與時間序列的連續性**。
 對 GARCH 這類需要連續遞迴的模型，中間挖洞是災難性的 —— 條件變異數的遞迴會斷掉。

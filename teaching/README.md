@@ -116,29 +116,34 @@ python build_notebook.py           # 產生 research_methods.ipynb
 ### 數學排版慣例
 
 教材會在三個渲染器下閱讀：Jupyter/VS Code、nbviewer/Colab、GitHub 的 .ipynb 檢視器。
-只有 `$...$` / `$$...$$` 三者皆支援，因此採用這組分隔符
+只有 `$...$` 與 `$$...$$` 三者皆支援，因此採用這組分隔符
 （GitHub 專用的保護寫法在 Jupyter 中會顯示成程式碼）。
 
-代價是 GitHub 會在擷取數學式之前先跑一次 CommonMark 反斜線轉義，
-把反斜線加標點的組合吃掉。因此 `parts/` 中**一律避開**下列序列：
+代價是 GitHub 會在擷取數學式之前先跑一次 CommonMark 反斜線轉義，把某些序列吃掉。
+下列全部在 `parts/` 中避開，實測皆為零：
 
-| 序列 | 用途 | 替代做法 |
+| 序列 | 用途 | 本教材的替代做法 |
 |---|---|---|
-| `\,` `\;` `\:` `\!` | 間距微調 | 用一般空格，或省略 |
-| `\%` | 百分號 | 把百分號移到數學式外 |
-| `\_` `\&` `\#` | 轉義符號 | 改用 `\text{}` |
+| 反斜線加逗號／分號／冒號／驚嘆號 | 間距微調 | 用一般空格，或省略 |
+| 反斜線加百分號 | 百分號 | 把百分號移到數學式外 |
+| 連續兩個反斜線 | 列分隔 | **完全不使用多列數學區塊**：`cases` 改寫為 min/max 等價式或表格，`pmatrix` 改為表格，分段密度改為兩條分開的式子 |
+| `\operatorname` | 運算子 | 改用 `\mathrm`（GitHub 的 KaTeX 拒絕前者） |
+| 表格儲存格內的豎線 | 絕對值、範數、行內程式碼 | 改用 `\lvert` 與 `\rvert`，或改寫文字避開豎線 |
 
-唯一例外是 `\\`（列分隔），在 `cases` / `aligned` / `matrix` 中不可避免，
-目前有 7 處，發布後需在 GitHub 上目視確認。`\operatorname` 被 GitHub 的 KaTeX 拒絕，
-一律改用 `\mathrm`。
+最後一項在實測中抓到一個真實錯誤：一列表格裡的行內程式碼含未跳脫的豎線，
+把欄位切壞，連帶讓同一列後面的數學式整段消失 —— 而頁面看起來完全正常。
 
-`build_notebook.py` 產出後可用下列檢查確認：
+### 驗證方式
+
+不要相信渲染出來的頁面，要驗證**渲染器實際收到什麼**。
+把所有 markdown 儲存格送進 GitHub 的 markdown API，比對 LaTeX 指令的存活數：
 
 ```bash
-python -c "import nbformat;B=chr(92);md='\n'.join(c.source for c in nbformat.read('research_methods.ipynb',4).cells if c.cell_type=='markdown');print({t:md.count(B+t) for t in [',',';','!','%','operatorname']})"
+python check_github_math.py
 ```
 
-全部為 0 才算通過。
+腳本會列出任何被吃掉的指令與 `flash-error` 數量，兩者皆為零才算通過。
+最近一次實測：**82 種指令、975 次出現，全數存活；flash-error 為 0**。
 
 ---
 

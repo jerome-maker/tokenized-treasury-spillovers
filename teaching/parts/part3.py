@@ -197,9 +197,7 @@ $$
 
 其中
 
-$$
-\\mathbb{I}_{[\\varepsilon_{t-1} < 0]} = \\begin{cases} 1 & \\varepsilon_{t-1} < 0 \\\\ 0 & \\varepsilon_{t-1} \\ge 0\\end{cases}
-$$
+其中指示函數 $\\mathbb{I}_{[\\varepsilon_{t-1} < 0]}$ 在 $\\varepsilon_{t-1} < 0$ 時取值 1，否則取值 0。
 
 ### 解讀 $\\gamma$
 
@@ -298,7 +296,7 @@ $$
 
 | 項 | 捕捉什麼 |
 |---|---|
-| $\\alpha(|z_{t-1}| - \\mathbb{E}\\|z_{t-1}\\|)$ | **幅度效果**：衝擊有多大（不分方向） |
+| $\\alpha(\\lvert z_{t-1}\\rvert - \\mathbb{E}\\lvert z_{t-1}\\rvert)$ | **幅度效果**：衝擊有多大（不分方向） |
 | $\\gamma z_{t-1}$ | **符號效果**：衝擊往哪邊（線性，不是門檻） |
 
 減去 $\\mathbb{E}|z_{t-1}|$ 是為了讓幅度項的期望值為零，使 $\\omega$ 保持「長期水準」的解讀。
@@ -391,13 +389,21 @@ md("""
 Hansen (1994) 的偏態 $t$ 有兩個形狀參數：自由度 $\\nu$ 控制尾部厚度，
 偏態參數 $\\lambda \\in (-1, 1)$ 控制不對稱。密度為
 
+左尾（$z < -a/b$）：
+
 $$
-f(z \\mid \\nu, \\lambda) =
-\\begin{cases}
-bc\\left(1 + \\dfrac{1}{\\nu-2}\\left(\\dfrac{bz+a}{1-\\lambda}\\right)^2\\right)^{-(\\nu+1)/2} & z < -a/b \\\\[2ex]
-bc\\left(1 + \\dfrac{1}{\\nu-2}\\left(\\dfrac{bz+a}{1+\\lambda}\\right)^2\\right)^{-(\\nu+1)/2} & z \\ge -a/b
-\\end{cases}
+f(z \\mid \\nu, \\lambda) = bc\\left(1 + \\dfrac{1}{\\nu-2}
+\\left(\\dfrac{bz+a}{1-\\lambda}\\right)^2\\right)^{-(\\nu+1)/2}
 $$
+
+右尾（$z \\ge -a/b$）：
+
+$$
+f(z \\mid \\nu, \\lambda) = bc\\left(1 + \\dfrac{1}{\\nu-2}
+\\left(\\dfrac{bz+a}{1+\\lambda}\\right)^2\\right)^{-(\\nu+1)/2}
+$$
+
+兩式只差在分母的 $1 \\mp \\lambda$：$\\lambda > 0$ 時右尾被拉長，$\\lambda < 0$ 時左尾被拉長。
 
 其中 $a, b, c$ 是使 $\\mathbb{E}[z]=0, \\mathrm{Var}(z)=1$ 的標準化常數。
 
