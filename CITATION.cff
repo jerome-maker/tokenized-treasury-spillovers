@@ -10,6 +10,14 @@ version: 1.0.0
 date-released: "2026-08-25"
 license: MIT
 repository-code: "https://github.com/jerome-maker/tokenized-treasury-spillovers"
+doi: 10.5281/zenodo.22092666
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22092666
+    description: "Concept DOI: always resolves to the latest archived version."
+  - type: doi
+    value: 10.5281/zenodo.22092667
+    description: "Version DOI for release v1.0.0, the snapshot matching the Investment Analysts Journal submission."
 keywords:
   - tokenized real-world assets
   - tokenized Treasury bonds

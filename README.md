@@ -2,7 +2,7 @@
 
 Data-retrieval and analysis code (Python and R) and processed datasets underlying every table and figure in *"Tokenized Treasuries Across Asset Classes: Time-Varying Correlation, Spillovers, and Hedging Effectiveness Against Equities, Crypto, DeFi Tokens and Gold,"* submitted to *Investment Analysts Journal*.
 
-[![DOI](https://zenodo.org/badge/DOI/PLACEHOLDER.svg)](https://doi.org/PLACEHOLDER)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22092666.svg)](https://doi.org/10.5281/zenodo.22092666)
 
 > The manuscript itself is under journal review and is not included in this repository. This repo contains only the reproducible data pipeline: fetch scripts, processed datasets, analysis code, and the figures/tables generated from them.
 
