@@ -120,7 +120,9 @@ matplotlib 的預設字型（DejaVu Sans）沒有 CJK 字符，中文標題與�
 因此圖形內的文字（標題、軸標籤、圖例、標註）一律使用英文，敘述與 `print()` 輸出
 則維持中文（後者走 HTML 層，CJK 正常）。
 
-`build_notebook.py` 內建守衛：任何 matplotlib 文字參數含中文就中止建置。
+`build_notebook.py` 內建守衛：任何 matplotlib 文字參數含非拉丁文字就中止建置。
+涵蓋 CJK、假名、諺文、希伯來文、阿拉伯文、泰文 —— 範圍刻意大於本專案所需，
+因為把守衛縮到剛好等於「目前踩過的坑」，正是下一個變體漏過去的方式。
 
 ```bash
 python build_notebook.py
@@ -170,11 +172,17 @@ print('missing glyphs:', len(miss))
 把所有 markdown 儲存格送進 GitHub 的 markdown API，比對 LaTeX 指令的存活數：
 
 ```bash
-python check_github_math.py
+python check_notebook_render.py research_methods.ipynb
 ```
 
-腳本會列出任何被吃掉的指令與 `flash-error` 數量，兩者皆為零才算通過。
-最近一次實測：**82 種指令、975 次出現，全數存活；flash-error 為 0**。
+這支腳本跑四項檢查：被 CommonMark 吃掉的轉義序列、表格儲存格內的豎線、
+繪圖呼叫中的非拉丁文字，以及最關鍵的一項 —— 把每個 markdown 儲存格送進
+GitHub 自己的渲染器，比對 LaTeX 指令的存活數。exit code 非零，可當 pre-commit hook。
+
+最近一次實測：**82 種指令、975 次出現，全數存活；渲染失敗 0**。
+
+腳本刻意 vendored 在 repo 內而非從共用位置引用：任何人 clone 下來都要能重現，
+而一個會去讀作者家目錄的建置流程做不到這件事。
 
 ---
 
