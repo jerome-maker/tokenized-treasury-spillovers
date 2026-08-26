@@ -113,6 +113,37 @@ python build_notebook.py --check   # 只驗證，不寫檔
 python build_notebook.py           # 產生 research_methods.ipynb
 ```
 
+### 圖形文字一律用英文
+
+matplotlib 的預設字型（DejaVu Sans）沒有 CJK 字符，中文標題與軸標籤會**靜靜地**
+渲染成一排豆腐方塊 —— matplotlib 與筆記本都不會發出任何警告。
+因此圖形內的文字（標題、軸標籤、圖例、標註）一律使用英文，敘述與 `print()` 輸出
+則維持中文（後者走 HTML 層，CJK 正常）。
+
+`build_notebook.py` 內建守衛：任何 matplotlib 文字參數含中文就中止建置。
+
+```bash
+python build_notebook.py
+# figures : text checked, no CJK (would render as tofu)
+```
+
+想直接驗證渲染結果，可攔截 matplotlib 的缺字警告 —— 最近一次實測為 0：
+
+```bash
+python -W always -c "
+import warnings, matplotlib; matplotlib.use('Agg')
+import nbformat
+nb = nbformat.read('research_methods.ipynb', as_version=4)
+ns, miss = {}, []
+for c in [x.source for x in nb.cells if x.cell_type=='code']:
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter('always')
+        exec(c.replace('display(', 'print('), ns)
+        miss += [str(x.message) for x in w if 'missing from font' in str(x.message)]
+print('missing glyphs:', len(miss))
+"
+```
+
 ### 數學排版慣例
 
 教材會在三個渲染器下閱讀：Jupyter/VS Code、nbviewer/Colab、GitHub 的 .ipynb 檢視器。

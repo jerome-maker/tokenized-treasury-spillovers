@@ -134,12 +134,12 @@ code("""
 # ---------------------------------------------------------------------------
 fig, axes = plt.subplots(3, 1, figsize=(9.5, 6), sharex=True)
 axes[0].plot(d.index, d["rho_dcc"], lw=0.9, color="#1b4965")
-axes[0].set_ylabel(r"$\\rho_t$"); axes[0].set_title("(1) 條件相關")
+axes[0].set_ylabel(r"$\\rho_t$"); axes[0].set_title("(1) Conditional correlation")
 axes[1].plot(d.index, d["sigma_eq"] / d["sigma_tok"], lw=0.9, color="#f4a261")
-axes[1].set_ylabel(r"$\\sigma_i/\\sigma_j$"); axes[1].set_title("(2) 波動比")
+axes[1].set_ylabel(r"$\\sigma_i/\\sigma_j$"); axes[1].set_title("(2) Volatility ratio")
 axes[2].plot(d.index, beta_star, lw=0.9, color="#bc4749")
 axes[2].axhline(0, color="grey", lw=0.7)
-axes[2].set_ylabel(r"$\\beta^*_t$"); axes[2].set_title(r"(3) 避險比率 = (1) $\\times$ (2)")
+axes[2].set_ylabel(r"$\\beta^*_t$"); axes[2].set_title(r"(3) Hedge ratio = (1) $\\times$ (2)")
 fig.tight_layout()
 plt.show()
 
@@ -270,10 +270,10 @@ for inst, grp in h.groupby("hedge_instrument"):
         ax.annotate(r["hedged_equity"], (r["cost_bp_ann_10bp"], r["HE"] * 100),
                     fontsize=6, xytext=(3, 3), textcoords="offset points")
 ax.axhline(0, color="grey", lw=0.8)
-ax.set_xlabel("年化再平衡成本（bp，10bp 單邊假設）")
-ax.set_ylabel("變異數縮減 HE（%）")
-ax.set_title("右上角才是有用的避險；本樣本沒有任何一格接近右上角")
-ax.legend(title="避險工具", fontsize=8)
+ax.set_xlabel("Annualised rebalancing cost (bp, at 10bp one-way)")
+ax.set_ylabel("Variance reduction HE (%)")
+ax.set_title("A useful hedge sits top-left (high HE, low cost); nothing here comes close")
+ax.legend(title="Hedge instrument", fontsize=8)
 fig.tight_layout()
 plt.show()
 

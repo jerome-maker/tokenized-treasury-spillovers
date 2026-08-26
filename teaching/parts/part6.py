@@ -104,11 +104,11 @@ fig, axes = plt.subplots(1, 3, figsize=(11, 2.8))
 for ax, s in zip(axes, [4, 16, 64]):
     t = np.arange(-3*s, 3*s + 1)
     psi = morlet(t / s) / np.sqrt(s)
-    ax.plot(t, psi.real, lw=1.2, color="#1b4965", label="實部")
-    ax.plot(t, psi.imag, lw=1.0, color="#bc4749", ls="--", label="虛部")
-    ax.plot(t, np.abs(psi), lw=1.0, color="#2a9d8f", label="包絡")
-    ax.set_title(f"尺度 s = {s}（≈ {1.03*s:.0f} 天週期）")
-    ax.set_xlabel("交易日")
+    ax.plot(t, psi.real, lw=1.2, color="#1b4965", label="Real")
+    ax.plot(t, psi.imag, lw=1.0, color="#bc4749", ls="--", label="Imaginary")
+    ax.plot(t, np.abs(psi), lw=1.0, color="#2a9d8f", label="Envelope")
+    ax.set_title(f"Scale s = {s} (period ~{1.03*s:.0f} days)")
+    ax.set_xlabel("Trading days")
 axes[0].legend(fontsize=7)
 fig.tight_layout()
 plt.show()
@@ -173,8 +173,9 @@ for ti in range(WCT.shape[1]):
 ```
 
 > **這一行對本研究的一個結論起了決定性作用**。BUIDL–FANG 在 32–128 天頻帶的同調度是 0.350，
-> 高於 IEF–GLD 的 0.272。但 BUIDL 只有 528 個觀測，扣掉影響錐後，
-> 32–128 天尺度上可用的時間跨度非常窄。
+> 高於 IEF–GLD 的 0.272。但 BUIDL 只有 528 個觀測：該頻帶只有約 **57%** 的時頻面積落在影響錐內，
+> 對照 IEF 的 906 個觀測是 **75%**；若只看 128 天這一端，可用比例更降到 **31% 對 60%**。
+> 也就是說，BUIDL 在長尺度的同調度是由較少、且更靠近樣本中段的資料點算出來的。
 >
 > 論文因此不把這一格解讀成「低頻真實關聯」，而明說樣本長度限制了可信度。
 > 初稿曾寫「IEF–GLD 是唯一在最長尺度仍高於 0.27 的配對」—— 被自己的表格推翻，
@@ -219,8 +220,8 @@ print(f"  2. OUSG 的配對在三個頻帶上異常平坦（約 0.20–0.26）�
 print(f"  3. IEF–GLD 在短、中期最高（{wav.loc['IEF-GLD'].iloc[0]:.3f}, {wav.loc['IEF-GLD'].iloc[1]:.3f}），"
       f"長期降至 {wav.loc['IEF-GLD'].iloc[2]:.3f}")
 print(f"  4. 但 BUIDL–FANG 在長期是 {wav.loc['BUIDL-FANG'].iloc[2]:.3f}，高於 IEF–GLD ——")
-print(f"     BUIDL 樣本僅 {int(wav.loc['BUIDL-FANG','n_obs'])} 天，扣除影響錐後長尺度可用區間極窄，")
-print("     故不解讀為真實的低頻關聯。")
+print(f"     BUIDL 樣本僅 {int(wav.loc['BUIDL-FANG','n_obs'])} 天，該頻帶僅約 57% 的時頻面積落在影響錐內")
+print("     （IEF 為 75%），故不解讀為真實的低頻關聯 —— 下一格的圖把這個幾何畫出來。")
 """),
 
 code("""
@@ -234,18 +235,21 @@ def coi_morlet(T, dt=1.0):
     return edge / np.sqrt(2)          # 該時點可信的最大尺度
 
 fig, axes = plt.subplots(1, 2, figsize=(10, 3.2), sharey=True)
-for ax, (T, label) in zip(axes, [(528, "BUIDL（528 天）"), (906, "IEF（906 天）")]):
+for ax, (T, label) in zip(axes, [(528, "BUIDL (528 days)"), (906, "IEF (906 days)")]):
     c = coi_morlet(T)
-    ax.fill_between(np.arange(T), c, 128, color="#d9d9d9", label="影響錐外（不可信）")
+    ax.fill_between(np.arange(T), c, 128, color="#d9d9d9", label="Outside cone of influence")
     ax.plot(np.arange(T), c, color="#bc4749", lw=1.2)
-    ax.axhspan(32, 128, color="#1b4965", alpha=0.12, label="32–128 天頻帶")
+    ax.axhspan(32, 128, color="#1b4965", alpha=0.12, label="32-128 day band")
     ax.set_ylim(2, 128); ax.set_yscale("log")
-    ax.set_title(label); ax.set_xlabel("交易日")
-    usable = (c > 32).mean()
-    ax.text(0.5, 0.06, f"32 天以上尺度可用比例：{usable:.0%}",
+    ax.set_title(label); ax.set_xlabel("Trading days")
+    # 程式在做頻帶平均時，逐時點只取 [32,128) 中落在 COI 內的尺度，
+    # 因此真正相關的量是「該頻帶的 COI 覆蓋率」，而非單一尺度的可用比例。
+    band_scales = np.arange(32, 128)
+    coverage = np.mean([(band_scales < ci).mean() for ci in c])
+    ax.text(0.5, 0.06, f"32-128d band inside COI: {coverage:.0%}",
             transform=ax.transAxes, ha="center", fontsize=8,
             bbox=dict(fc="white", ec="grey", alpha=0.85))
-axes[0].set_ylabel("尺度（天）"); axes[0].legend(fontsize=7, loc="upper right")
+axes[0].set_ylabel("Scale (days)"); axes[0].legend(fontsize=7, loc="upper right")
 fig.tight_layout()
 plt.show()
 """),
@@ -360,11 +364,11 @@ for p in pairs:
         labels.append(f"{p}\\n{r['band'].split('(')[0].strip()}")
         wtc_v.append(r["WTC"]); pwc_v.append(r["PWC"])
 
-ax.bar(x - 0.2, wtc_v, width=0.4, label="WTC（原始）", color="#1b4965")
-ax.bar(x + 0.2, pwc_v, width=0.4, label="PWC（控制 3M 利率）", color="#f4a261")
+ax.bar(x - 0.2, wtc_v, width=0.4, label="WTC (raw)", color="#1b4965")
+ax.bar(x + 0.2, pwc_v, width=0.4, label="PWC (3M rate controlled)", color="#f4a261")
 ax.set_xticks(x); ax.set_xticklabels(labels, rotation=90, fontsize=6)
-ax.set_ylabel("同調度")
-ax.set_title("控制短率因子後同調度普遍下降，但未歸零")
+ax.set_ylabel("Coherence")
+ax.set_title("Coherence falls once the short-rate factor is removed, but does not vanish")
 ax.legend()
 fig.tight_layout()
 plt.show()

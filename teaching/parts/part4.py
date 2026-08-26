@@ -199,9 +199,9 @@ code("""
 fig, ax = plt.subplots(figsize=(9.5, 3.4))
 ax.plot(Z.index, rho_path, lw=1.1, color="#1b4965", label=r"DCC $\\rho_t$")
 ax.axhline(np.corrcoef(U[:, 0], U[:, 1])[0, 1], color="#bc4749", ls="--", lw=1.4,
-           label="CCC 常數相關")
+           label="CCC constant correlation")
 ax.axhline(0, color="grey", lw=0.7)
-ax.set_title("IEF vs GLD：動態相關在 0.1 到 0.6 之間擺盪，常數相關完全掩蓋了這個結構")
+ax.set_title("IEF vs GLD: correlation swings between 0.1 and 0.6; a constant hides all of it")
 ax.set_ylabel(r"$\\rho_t$")
 ax.legend()
 fig.tight_layout()
@@ -328,12 +328,12 @@ axes[0].plot(Z.index, rho_path, lw=1.0, color="#1b4965", label=r"DCC $\\rho_t$")
 axes[0].plot(Z.index, rho_adcc, lw=1.0, color="#bc4749", label=r"ADCC $\\rho_t$")
 axes[0].set_ylabel(r"$\\rho_t$")
 axes[0].legend()
-axes[0].set_title("DCC vs ADCC 相關路徑")
+axes[0].set_title("DCC vs ADCC correlation paths")
 
 both_neg_mask = (U[:, 0] < 0) & (U[:, 1] < 0)
 axes[1].fill_between(Z.index, 0, both_neg_mask.astype(int),
                      step="mid", color="#6d6875", alpha=0.6)
-axes[1].set_ylabel("同時為負")
+axes[1].set_ylabel("Both negative")
 axes[1].set_yticks([0, 1])
 fig.tight_layout()
 plt.show()
@@ -484,13 +484,13 @@ fig, axes = plt.subplots(1, 2, figsize=(10, 3.2))
 
 d_deg = pd.read_csv(PROC / "dcc_BUIDL_SOXX.csv", parse_dates=["date"]).set_index("date")
 axes[0].plot(d_deg.index, d_deg["rho_dcc"], lw=1.2, color="#6d6875")
-axes[0].set_title(f"BUIDL–SOXX（退化）\\nsd = {d_deg['rho_dcc'].std():.2e}, LR p = "
+axes[0].set_title(f"BUIDL-SOXX (degenerate)\\nsd = {d_deg['rho_dcc'].std():.2e}, LR p = "
                   f"{summ.loc['BUIDL-SOXX','LR_pvalue_vs_CCC']:.3f}")
 axes[0].set_ylabel(r"$\\rho_t$")
 
 d_real = pd.read_csv(PROC / "dcc_IEF_GLD.csv", parse_dates=["date"]).set_index("date")
 axes[1].plot(d_real.index, d_real["rho_dcc"], lw=1.0, color="#1b4965")
-axes[1].set_title(f"IEF–GLD（真實動態）\\nsd = {d_real['rho_dcc'].std():.3f}, LR p = "
+axes[1].set_title(f"IEF-GLD (genuinely dynamic)\\nsd = {d_real['rho_dcc'].std():.3f}, LR p = "
                   f"{summ.loc['IEF-GLD','LR_pvalue_vs_CCC']:.4f}")
 
 fig.tight_layout()

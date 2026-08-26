@@ -245,12 +245,12 @@ s_nav = panel["R_OUSG_nav"].dropna()
 s_mkt = panel["R_OUSG_mkt"].dropna()
 
 axes[0].plot(s_nav.index, s_nav.values, lw=1, color="#1b4965")
-axes[0].set_title(f"NAV 軌：ADF p = {ur.loc['R_OUSG_nav','ADF_pvalue']:.3f}（無法拒絕單根）")
-axes[0].set_ylabel("% / 日")
+axes[0].set_title(f"NAV track: ADF p = {ur.loc['R_OUSG_nav','ADF_pvalue']:.3f} (unit root not rejected)")
+axes[0].set_ylabel("% per day")
 
 axes[1].plot(s_mkt.index, s_mkt.values, lw=0.5, color="#bc4749")
 axes[1].axhline(0, color="grey", lw=0.7)
-axes[1].set_title(f"市值軌：ADF p = {ur.loc['R_OUSG_mkt','ADF_pvalue']:.4f}（定態）")
+axes[1].set_title(f"Market-cap track: ADF p = {ur.loc['R_OUSG_mkt','ADF_pvalue']:.4f} (stationary)")
 
 fig.tight_layout()
 plt.show()
@@ -361,9 +361,9 @@ print()
 
 fig, axes = plt.subplots(1, 2, figsize=(10, 3))
 axes[0].plot(r.index, r.values, lw=0.5, color="#1b4965")
-axes[0].set_title("報酬 $r_t$：均值附近震盪，方向難以預測")
+axes[0].set_title("Returns $r_t$: oscillate around the mean, direction unpredictable")
 axes[1].plot(r.index, (r ** 2).values, lw=0.5, color="#bc4749")
-axes[1].set_title("平方報酬 $r_t^2$：明顯的叢聚結構 → GARCH 的正當性")
+axes[1].set_title("Squared returns $r_t^2$: clear clustering -- the case for GARCH")
 fig.tight_layout()
 plt.show()
 """),

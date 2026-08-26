@@ -246,12 +246,12 @@ fig, axes = plt.subplots(2, 1, figsize=(9, 5), sharex=True)
 
 sub = panel.loc[panel["R_OUSG_mkt"].notna()]
 axes[0].plot(sub.index, sub["R_OUSG_nav"], lw=0.9, color="#1b4965")
-axes[0].set_title("OUSG 基本面軌（3M 國庫券日累積）— 幾乎是平滑的確定性序列")
-axes[0].set_ylabel("% / 日")
+axes[0].set_title("OUSG fundamental (NAV) track: 3M T-bill accrued daily -- near-deterministic")
+axes[0].set_ylabel("% per day")
 
 axes[1].plot(sub.index, sub["R_OUSG_mkt"], lw=0.6, color="#bc4749")
-axes[1].set_title("OUSG 市值軌（TVL 對數變動）— 大幅離散跳動，反映機構申贖")
-axes[1].set_ylabel("% / 日")
+axes[1].set_title("OUSG market-cap track: log change in TVL -- lumpy institutional flows")
+axes[1].set_ylabel("% per day")
 
 fig.tight_layout()
 plt.show()

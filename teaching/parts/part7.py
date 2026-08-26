@@ -196,12 +196,12 @@ k_star, ks, Fv = best_single_break(rho)
 fig, axes = plt.subplots(2, 1, figsize=(9.5, 5), sharex=False)
 axes[0].plot(d.index, rho, lw=0.9, color="#1b4965")
 axes[0].axvline(d.index[k_star], color="#bc4749", ls="--", lw=1.4,
-                label=f"最佳單一斷點：{d.index[k_star].date()}")
-axes[0].set_ylabel(r"$\\rho_t$"); axes[0].legend(); axes[0].set_title("IEF–GLD 相關路徑")
+                label=f"Best single break: {d.index[k_star].date()}")
+axes[0].set_ylabel(r"$\\rho_t$"); axes[0].legend(); axes[0].set_title("IEF-GLD correlation path")
 
 axes[1].plot(d.index[ks], Fv, lw=1.1, color="#2a9d8f")
 axes[1].axvline(d.index[k_star], color="#bc4749", ls="--", lw=1.2)
-axes[1].set_ylabel("F 統計量"); axes[1].set_title(r"$F(\\lambda)$ 曲線：supF 取的是這條線的最大值")
+axes[1].set_ylabel("F statistic"); axes[1].set_title(r"$F(\\lambda)$ curve: supF is the maximum of this line")
 fig.tight_layout()
 plt.show()
 
@@ -324,11 +324,11 @@ iid_stats = np.array([rng.choice(rho_ief, size=len(rho_ief), replace=True).mean(
 ci_iid = np.percentile(iid_stats, [2.5, 97.5])
 
 fig, ax = plt.subplots(figsize=(8.5, 3))
-ax.hist(iid_stats, bins=50, alpha=0.65, color="#bc4749", label=f"iid 拔靴（寬度 {ci_iid[1]-ci_iid[0]:.4f}）")
-ax.hist(boot_stats, bins=50, alpha=0.65, color="#1b4965", label=f"區塊拔靴（寬度 {ci[1]-ci[0]:.4f}）")
-ax.axvline(rho_ief.mean(), color="black", lw=1.2, ls="--", label="點估計")
-ax.set_xlabel(r"重抽樣本的 $\\bar{\\rho}$"); ax.set_ylabel("次數")
-ax.set_title("忽略序列相關會讓信賴區間嚴重過窄")
+ax.hist(iid_stats, bins=50, alpha=0.65, color="#bc4749", label=f"iid bootstrap (width {ci_iid[1]-ci_iid[0]:.4f})")
+ax.hist(boot_stats, bins=50, alpha=0.65, color="#1b4965", label=f"Block bootstrap (width {ci[1]-ci[0]:.4f})")
+ax.axvline(rho_ief.mean(), color="black", lw=1.2, ls="--", label="Point estimate")
+ax.set_xlabel(r"Resampled $\\bar{\\rho}$"); ax.set_ylabel("Frequency")
+ax.set_title("Ignoring serial dependence makes the interval far too narrow")
 ax.legend(fontsize=8)
 fig.tight_layout()
 plt.show()
@@ -352,8 +352,8 @@ ax.errorbar(nd_bo["point_mean"], y,
             fmt="o", color="#1b4965", ecolor="#6d6875", capsize=3, markersize=4)
 ax.axvline(0, color="grey", ls="--", lw=0.9)
 ax.set_yticks(y); ax.set_yticklabels(nd_bo["pair"].str.replace("_", " vs. "), fontsize=7)
-ax.set_xlabel("平均 DCC 相關（區塊拔靴 95% CI）")
-ax.set_title("只有 IEF–GLD 的區間明顯遠離零")
+ax.set_xlabel("Mean DCC correlation (block-bootstrap 95% CI)")
+ax.set_title("Only IEF-GLD's interval sits clearly away from zero")
 fig.tight_layout()
 plt.show()
 
@@ -476,14 +476,14 @@ code("""
 # ---------------------------------------------------------------------------
 fig, axes = plt.subplots(2, 1, figsize=(9.5, 5.2), sharex=False)
 
-for ax, pair, note in [(axes[0], "IEF_GLD", "真實機制：長期持續、切換清晰"),
-                       (axes[1], "OUSG_FANG", "雜訊分類：頻繁跳動、無持續性")]:
+for ax, pair, note in [(axes[0], "IEF_GLD", "genuine regime: persistent, clean switching"),
+                       (axes[1], "OUSG_FANG", "noise classification: rapid flicker, no persistence")]:
     sp = pd.read_csv(PROC / f"regime_probs_{pair}.csv", index_col=0, parse_dates=True)
     hi_col = sp.columns[int(np.argmax([reg.loc[pair, "mean_rho_high_regime"] >= 0]))]
     ax.fill_between(sp.index, 0, sp.iloc[:, -1], color="#1b4965", alpha=0.75, step="mid")
-    ax.set_ylim(0, 1); ax.set_ylabel("P(高相關機制)")
-    ax.set_title(f"{pair.replace('_', ' vs. ')}　—　{note}"
-                 f"（預期持續 {reg.loc[pair,'expected_duration_high_days']:.1f} 天）")
+    ax.set_ylim(0, 1); ax.set_ylabel("P(high-corr. regime)")
+    ax.set_title(f"{pair.replace('_', ' vs. ')} -- {note}"
+                 f" (expected duration {reg.loc[pair,'expected_duration_high_days']:.1f} days)")
 
 fig.tight_layout()
 plt.show()
