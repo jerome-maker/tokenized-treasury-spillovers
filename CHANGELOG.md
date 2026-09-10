@@ -4,6 +4,69 @@ All notable changes to this dataset and pipeline. Versions correspond to
 Zenodo archived releases under concept DOI
 [10.5281/zenodo.22092666](https://doi.org/10.5281/zenodo.22092666).
 
+## v1.2.0 — 2026-09-10
+
+Version DOI: pending (assigned by Zenodo when this release is archived).
+
+Additive release. **No reported number changes.** `code/`, `data/`, `tables/`
+and `figures/` are byte-identical to v1.1.0; everything below is new material
+or tooling. Anyone who pulled v1.1.0 for the results does not need to re-pull.
+
+### Added
+
+- **`teaching/research_methods.ipynb`, a 26-unit graduate teaching notebook**
+  covering the full pipeline, organised by research stage and by the
+  statistical technique each stage uses. Each unit works through four layers:
+  the principle (what problem the step solves and why the previous step is
+  insufficient), the formulas with every symbol defined, the algorithm
+  including the numerical details that matter, and the program logic tied back
+  to the actual pipeline code. Committed with executed output and 19 figures,
+  so it reads on GitHub without running anything; all 54 code cells execute
+  against the `data/processed/` in this same release.
+- Code cells are of two kinds: demonstrations that read existing pipeline
+  output and interpret it, and from-scratch reimplementations of the core
+  algorithms (the DCC `Q_t` recursion, the GFEVD matrix algebra, Jarque-Bera,
+  Ljung-Box, the moving block bootstrap, Bai-Perron's `F(lambda)` curve)
+  written for readability rather than speed, so the formula-to-code
+  correspondence stays visible.
+- The final unit dissects the four errors found in the v1.1.0 pre-submission
+  audit — each of which passed the author's own review, raised no exception and
+  produced plausible-looking output — and pairs each with the check that would
+  have caught it.
+
+### Added — tooling
+
+- **`teaching/build_notebook.py`** assembles the notebook from `parts/*.py`
+  modules rather than hand-edited JSON, and executes it (`--execute`) so the
+  committed copy always carries real output. Without that flag an earlier
+  rebuild produced a notebook with 0 of 54 outputs and no figures while the
+  render check still passed, because the check reads cell source, not output.
+- **`teaching/check_notebook_render.py`** verifies four things a rendered page
+  will not reveal: forbidden backslash-punctuation sequences, pipes inside
+  table cells, non-Latin text in plot calls, and — the decisive one — a
+  round-trip through GitHub's own `/markdown` endpoint that counts how many
+  LaTeX commands survive.
+
+### Fixed — presentation only
+
+- **The notebook's math was being silently altered by GitHub's renderer.**
+  Measured against GitHub's markdown API rather than by eye: a CommonMark
+  backslash-escape pass runs before math extraction, so a broken equation
+  renders cleanly while saying something other than what was written. Row
+  separators were being halved (`\\\\` to `\\`), which breaks every
+  `cases`/`pmatrix`/`aligned` block. Rewritten into equivalent forms that need
+  no row separator (min/max expressions, prose, separate display equations,
+  markdown tables) rather than double-escaped, which would then break in
+  Jupyter. A second measurement caught an inline code span whose unescaped
+  pipes split a table row and destroyed the math in the following cell.
+- **All figure text in the notebook is now English.** The matplotlib default
+  font has no CJK glyphs, so every Chinese label in all 19 figures had been
+  rendering as blank boxes. 61 text arguments translated; the build now fails
+  on any non-Latin string passed to a plotting call.
+- A figure caption that contradicted its own axes, and a "very narrow" band
+  description that disagreed with the statistic the pipeline computes (57% vs
+  75% coverage), both corrected.
+
 ## v1.1.0 — 2026-08-25
 
 Version DOI [10.5281/zenodo.22094343](https://doi.org/10.5281/zenodo.22094343).
